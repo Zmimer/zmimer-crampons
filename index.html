@@ -27,7 +27,7 @@
         <!-- User ID Display -->
         <div class="mb-6 text-sm text-gray-400 text-center">
             <p>Ton identifiant unique pour cette session est :</p>
-            <p id="userId" class="text-xs break-all mt-1 bg-gray-700 p-2 rounded-md text-gray-200">Chargement...</p>
+            <p id="userId" class="text-xs break-all mt-1 bg-gray-700 p-2 rounded-md text-gray-200">Connexion en cours...</p>
         </div>
 
         <!-- Order Form -->
@@ -35,9 +35,9 @@
             <!-- Game of Chance Section -->
             <div class="bg-gray-700 p-4 rounded-md border border-teal-400 shadow-md">
                 <label for="luckyNumber" class="block text-sm font-medium text-gray-200">Mon nombre porte-bonheur (entre 1 et 100)</label>
-                <input type="number" id="luckyNumber" name="luckyNumber" min="1" max="100" class="mt-1 block w-full px-3 py-2 bg-gray-600 border border-gray-500 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400">
+                <input type="number" id="luckyNumber" name="luckyNumber" min="1" max="100" class="mt-1 block w-full px-3 py-2 bg-gray-600 border border-gray-500 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400" disabled>
                 <div class="flex justify-center mt-4">
-                    <button type="button" id="tryLuckBtn" class="py-2 px-6 bg-teal-500 text-white font-semibold rounded-md shadow-lg hover:bg-teal-400 transition-colors duration-200">
+                    <button type="button" id="tryLuckBtn" class="py-2 px-6 bg-teal-500 text-white font-semibold rounded-md shadow-lg hover:bg-teal-400 transition-colors duration-200" disabled>
                         Tenter ma chance
                     </button>
                 </div>
@@ -46,63 +46,63 @@
 
             <div>
                 <label for="model" class="block text-sm font-medium text-gray-200">Modèle de Crampons</label>
-                <input type="text" id="model" name="model" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400">
+                <input type="text" id="model" name="model" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400" disabled>
             </div>
             <div>
                 <label for="photo" class="block text-sm font-medium text-gray-200">Photo de la paire (facultatif)</label>
-                <input type="file" id="photoUpload" name="photo" accept="image/*" class="mt-1 block w-full text-gray-200 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-teal-500 file:text-white hover:file:bg-teal-400">
+                <input type="file" id="photoUpload" name="photo" accept="image/*" class="mt-1 block w-full text-gray-200 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-teal-500 file:text-white hover:file:bg-teal-400" disabled>
             </div>
             <div>
                 <label for="size" class="block text-sm font-medium text-gray-200">Pointure (EU)</label>
-                <input type="number" id="size" name="size" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400">
+                <input type="number" id="size" name="size" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400" disabled>
             </div>
             <div class="flex items-center space-x-2">
-                <input type="checkbox" id="secondPair" name="secondPair" class="form-checkbox h-4 w-4 text-teal-600 transition duration-150 ease-in-out">
+                <input type="checkbox" id="secondPair" name="secondPair" class="form-checkbox h-4 w-4 text-teal-600 transition duration-150 ease-in-out" disabled>
                 <label for="secondPair" class="text-sm font-medium text-gray-200">Deuxième paire (Total 200€)</label>
             </div>
             <div id="secondPairOptions" class="space-y-4 hidden">
                 <div>
                     <label for="model2" class="block text-sm font-medium text-gray-200">Modèle de la deuxième paire</label>
-                    <input type="text" id="model2" name="model2" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400">
+                    <input type="text" id="model2" name="model2" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400" disabled>
                 </div>
                 <div>
                     <label for="photo2" class="block text-sm font-medium text-gray-200">Photo de la deuxième paire (facultatif)</label>
-                    <input type="file" id="photoUpload2" name="photo2" accept="image/*" class="mt-1 block w-full text-gray-200 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-teal-500 file:text-white hover:file:bg-teal-400">
+                    <input type="file" id="photoUpload2" name="photo2" accept="image/*" class="mt-1 block w-full text-gray-200 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-teal-500 file:text-white hover:file:bg-teal-400" disabled>
                 </div>
                 <div>
                     <label for="size2" class="block text-sm font-medium text-gray-200">Pointure (EU) de la deuxième paire</label>
-                    <input type="number" id="size2" name="size2" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400">
+                    <input type="number" id="size2" name="size2" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400" disabled>
                 </div>
             </div>
             <div>
                 <label for="name" class="block text-sm font-medium text-gray-200">Ton Prénom</label>
-                <input type="text" id="name" name="name" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400">
+                <input type="text" id="name" name="name" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400" disabled>
             </div>
             <div>
                 <label for="phone" class="block text-sm font-medium text-gray-200">Numéro de Téléphone</label>
-                <input type="tel" id="phone" name="phone" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400">
+                <input type="tel" id="phone" name="phone" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400" disabled>
             </div>
             <div>
                 <label for="description" class="block text-sm font-medium text-gray-200">Description / Notes (facultatif)</label>
-                <textarea id="description" name="description" rows="3" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400"></textarea>
+                <textarea id="description" name="description" rows="3" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400" disabled></textarea>
             </div>
             <div>
                 <label for="address" class="block text-sm font-medium text-gray-200">Adresse de livraison</label>
-                <input type="text" id="address" name="address" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400">
+                <input type="text" id="address" name="address" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400" disabled>
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label for="city" class="block text-sm font-medium text-gray-200">Ville</label>
-                    <input type="text" id="city" name="city" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400">
+                    <input type="text" id="city" name="city" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400" disabled>
                 </div>
                 <div>
                     <label for="postalCode" class="block text-sm font-medium text-gray-200">Code Postal</label>
-                    <input type="text" id="postalCode" name="postalCode" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400">
+                    <input type="text" id="postalCode" name="postalCode" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400" disabled>
                 </div>
             </div>
             <div>
                 <label for="country" class="block text-sm font-medium text-gray-200">Pays</label>
-                <select id="country" name="country" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400">
+                <select id="country" name="country" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400" disabled>
                     <option value="">Sélectionner un pays</option>
                     <option value="BE">Belgique</option>
                     <option value="FR">France</option>
@@ -159,13 +159,12 @@
         const ordersList = document.getElementById('ordersList');
         const userIdDisplay = document.getElementById('userId');
         const loadingOrdersEl = document.getElementById('loadingOrders');
+        const luckyNumberInput = document.getElementById('luckyNumber');
+        const formInputs = document.querySelectorAll('#orderForm input, #orderForm select, #orderForm textarea');
         const photoUploadInput = document.getElementById('photoUpload');
         const photoUpload2Input = document.getElementById('photoUpload2');
         const secondPairCheckbox = document.getElementById('secondPair');
         const secondPairOptionsDiv = document.getElementById('secondPairOptions');
-        const model2Input = document.getElementById('model2');
-        const size2Input = document.getElementById('size2');
-        const luckyNumberInput = document.getElementById('luckyNumber');
 
         let userId = null;
         // IMPORTANT: REMPLACE "YOUR_PAYPAL_EMAIL" PAR TON ADRESSE E-MAIL PAYPAL.
@@ -176,6 +175,7 @@
         const europeanCountries = ['BE', 'FR', 'DE', 'IT', 'ES', 'NL', 'PT', 'AT', 'LU', 'GB', 'CH'];
         
         let gameResult = null;
+        let hasPlayedGame = false;
 
         // Function to display a message
         function showMessage(text, isError = false) {
@@ -183,6 +183,23 @@
             setTimeout(() => {
                 messageContainer.innerHTML = '';
             }, 10000);
+        }
+
+        // Function to enable all form inputs
+        function enableForm() {
+            formInputs.forEach(input => input.disabled = false);
+            // Disable only the game of chance inputs if the user has already played
+            if (hasPlayedGame) {
+                 luckyNumberInput.disabled = true;
+                 tryLuckBtn.disabled = true;
+            }
+        }
+        
+        // Function to disable all form inputs
+        function disableForm() {
+            formInputs.forEach(input => input.disabled = true);
+            submitBtn.disabled = true;
+            tryLuckBtn.disabled = true;
         }
 
         // Update button text and show/hide second pair options when checkbox state changes
@@ -202,6 +219,9 @@
 
             submitBtn.textContent = `Passer la commande et Payer (${price}€)`;
             secondPairOptionsDiv.classList.toggle('hidden', !isSecondPair);
+            document.getElementById('model2').disabled = !isSecondPair;
+            document.getElementById('photoUpload2').disabled = !isSecondPair;
+            document.getElementById('size2').disabled = !isSecondPair;
         });
 
         // Function to update order status in Firestore
@@ -222,25 +242,14 @@
             }
         };
 
-        // Authenticate the user when the app starts
-        async function authenticate() {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (error) {
-                console.error("Authentication error:", error);
-            }
-        }
-        
         // Listen for authentication state changes and load data when a user is signed in
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 userId = user.uid;
                 userIdDisplay.textContent = userId;
                 console.log("User ID:", userId);
+
+                enableForm();
 
                 const ordersPath = `/artifacts/${appId}/users/${userId}/orders`;
                 const q = query(collection(db, ordersPath));
@@ -252,6 +261,9 @@
                     });
                     
                     if (orders.length > 0) {
+                         // Check if the user has already played the game of chance
+                        hasPlayedGame = orders.some(order => order.gameResult);
+
                         ordersList.innerHTML = orders.map(order => {
                             let photoHtml1 = '';
                             if (order.photo) {
@@ -314,11 +326,14 @@
                                 </div>
                             `;
                         }).join('');
-                        if (orders.some(order => order.gameResult)) {
+
+                        if (hasPlayedGame) {
                             tryLuckBtn.disabled = true;
                             luckyNumberInput.disabled = true;
                             gameResultContainer.innerHTML = `<p class="p-3 bg-red-700 text-red-200 rounded-md">Tu as déjà joué au jeu de chance pour cette session.</p>`;
-                            submitBtn.disabled = false;
+                        } else {
+                            tryLuckBtn.disabled = false;
+                            luckyNumberInput.disabled = false;
                         }
 
                     } else {
@@ -332,12 +347,21 @@
                 });
             } else {
                 console.log("No user is signed in.");
-                userIdDisplay.textContent = "Identifiant non disponible.";
+                userIdDisplay.textContent = "Identifiant non disponible. Réessaie.";
+                disableForm();
+                
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                    console.error("Authentication error:", error);
+                    userIdDisplay.textContent = "Erreur de connexion.";
+                }
             }
         });
-        
-        // Initial authentication call
-        authenticate();
 
         // Step 1: Handle the "Try my luck" button click
         tryLuckBtn.addEventListener('click', () => {
