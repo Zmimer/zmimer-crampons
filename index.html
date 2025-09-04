@@ -222,7 +222,7 @@
             }
         };
 
-        // Authentication and data loading
+        // Authenticate the user when the app starts
         async function authenticate() {
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -232,15 +232,15 @@
                 }
             } catch (error) {
                 console.error("Authentication error:", error);
-                showMessage("Erreur d'authentification. Veuillez réessayer.", true);
             }
         }
         
-        // Listen for authentication state changes
+        // Listen for authentication state changes and load data when a user is signed in
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 userId = user.uid;
                 userIdDisplay.textContent = userId;
+                console.log("User ID:", userId);
 
                 const ordersPath = `/artifacts/${appId}/users/${userId}/orders`;
                 const q = query(collection(db, ordersPath));
@@ -332,10 +332,10 @@
                 });
             } else {
                 console.log("No user is signed in.");
-                userIdDisplay.textContent = "Aucun identifiant disponible.";
+                userIdDisplay.textContent = "Identifiant non disponible.";
             }
         });
-
+        
         // Initial authentication call
         authenticate();
 
