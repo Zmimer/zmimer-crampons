@@ -140,7 +140,7 @@
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, addDoc, updateDoc, onSnapshot, collection, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Firebase configuration and initialization
@@ -170,6 +170,8 @@
         let userId = null;
         // IMPORTANT: REMPLACE "YOUR_PAYPAL_EMAIL" PAR TON ADRESSE E-MAIL PAYPAL.
         const paypalEmail = "zmimerimad5920@gmail.com"; 
+        // IMPORTANT: REMPLACE "https://www.your-github-pages-url.com" PAR L'URL DE TON SITE PUBLIC.
+        const githubPagesUrl = "https://www.your-github-pages-url.com";
         
         const europeanCountries = ['BE', 'FR', 'DE', 'IT', 'ES', 'NL', 'PT', 'AT', 'LU', 'GB', 'CH'];
         
@@ -221,117 +223,120 @@
         };
 
         // Authentication and data loading
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                userId = user.uid;
-                userIdDisplay.textContent = userId;
-                // Path to the user's private orders collection
-                const ordersPath = `/artifacts/${appId}/users/${userId}/orders`;
-                const q = query(collection(db, ordersPath));
-
-                // Listen for real-time updates to the orders
-                onSnapshot(q, (snapshot) => {
-                    const orders = [];
-                    snapshot.forEach((doc) => {
-                        orders.push({ id: doc.id, ...doc.data() });
-                    });
-                    
-                    if (orders.length > 0) {
-                        ordersList.innerHTML = orders.map(order => {
-                            let photoHtml1 = '';
-                            if (order.photo) {
-                                photoHtml1 = `<div class="mt-4"><p class="font-semibold text-gray-300 mb-2">Photo 1:</p><img src="${order.photo}" class="rounded-md w-full object-cover" alt="Photo de crampons"></div>`;
-                            }
-                            let photoHtml2 = '';
-                            if (order.photo2) {
-                                photoHtml2 = `<div class="mt-4"><p class="font-semibold text-gray-300 mb-2">Photo 2:</p><img src="${order.photo2}" class="rounded-md w-full object-cover" alt="Photo de crampons"></div>`;
-                            }
-                            let phoneHtml = '';
-                            if (order.phone) {
-                                phoneHtml = `<p class="text-gray-300"><span class="font-semibold">Téléphone:</span> ${order.phone}</p>`;
-                            }
-                            let secondPairHtml = '';
-                            if (order.secondPair) {
-                                secondPairHtml = `<p class="text-gray-300"><span class="font-semibold">Deuxième paire:</span> Oui</p>`;
-                            }
-                            let model2Html = '';
-                            if (order.model2) {
-                                model2Html = `<p class="text-gray-300"><span class="font-semibold">Modèle 2:</span> ${order.model2}</p>`;
-                            }
-                            let size2Html = '';
-                            if (order.size2) {
-                                size2Html = `<p class="text-gray-300"><span class="font-semibold">Pointure 2:</span> ${order.size2}</p>`;
-                            }
-                            let descriptionHtml = '';
-                            if (order.description) {
-                                descriptionHtml = `<p class="text-gray-300"><span class="font-semibold">Notes:</span> ${order.description}</p>`;
-                            }
-                            let gameResultHtml = '';
-                            if (order.gameResult) {
-                                const resultColor = order.gameResult === 'Gagné' ? 'text-green-400' : 'text-red-400';
-                                gameResultHtml = `<p class="mt-2 ${resultColor}"><span class="font-semibold">Jeu de chance:</span> ${order.gameResult} (Votre nombre: ${order.userGuess}, Nombre gagnant: ${order.winningNumber})</p>`;
-                            }
-
-                            return `
-                                <div class="bg-gray-700 p-4 rounded-md shadow-md">
-                                    <p class="text-gray-100"><span class="font-semibold">Modèle 1:</span> ${order.model}</p>
-                                    <p class="text-gray-300"><span class="font-semibold">Pointure 1:</span> ${order.size}</p>
-                                    ${model2Html}
-                                    ${size2Html}
-                                    <p class="text-gray-300"><span class="font-semibold">Prix:</span> ${order.price} €</p>
-                                    <p class="text-gray-300"><span class="font-semibold">Prénom:</span> ${order.name}</p>
-                                    <p class="text-gray-300"><span class="font-semibold">Adresse:</span> ${order.address}, ${order.postalCode} ${order.city} (${order.country})</p>
-                                    ${phoneHtml}
-                                    ${descriptionHtml}
-                                    ${secondPairHtml}
-                                    ${photoHtml1}
-                                    ${photoHtml2}
-                                    ${gameResultHtml}
-                                    <div class="mt-4">
-                                        <label for="status-${order.id}" class="block text-sm font-medium text-gray-300">Statut:</label>
-                                        <select id="status-${order.id}" class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400" onchange="window.updateOrderStatus('${order.id}', this.value)">
-                                            <option value="En attente de paiement" ${order.status === 'En attente de paiement' ? 'selected' : ''}>En attente de paiement</option>
-                                            <option value="Payée" ${order.status === 'Payée' ? 'selected' : ''}>Payée</option>
-                                            <option value="Expédiée" ${order.status === 'Expédiée' ? 'selected' : ''}>Expédiée</option>
-                                            <option value="Annulée" ${order.status === 'Annulée' ? 'selected' : ''}>Annulée</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('');
-
-                        // Check if a game has already been played in any of the user's orders
-                        if (orders.some(order => order.gameResult)) {
-                            tryLuckBtn.disabled = true;
-                            luckyNumberInput.disabled = true;
-                            gameResultContainer.innerHTML = `<p class="p-3 bg-red-700 text-red-200 rounded-md">Tu as déjà joué au jeu de chance pour cette session.</p>`;
-                            submitBtn.disabled = false;
-                        }
-
-                    } else {
-                        ordersList.innerHTML = `<p class="text-center text-gray-400">Aucune commande trouvée.</p>`;
-                    }
-                    loadingOrdersEl.style.display = 'none';
-                }, (error) => {
-                    console.error("Error fetching orders: ", error);
-                    ordersList.innerHTML = `<p class="text-center text-red-400">Erreur lors du chargement des commandes.</p>`;
-                    loadingOrdersEl.style.display = 'none';
-                });
-
-            } else {
-                // Sign in with custom token if available, otherwise anonymously
-                try {
-                    if (typeof __initial_auth_token !== 'undefined') {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-                } catch (error) {
-                    console.error("Authentication error:", error);
-                    showMessage("Erreur d'authentification. Veuillez réessayer.", true);
+        async function authenticateAndLoadData() {
+            try {
+                // First, attempt to sign in anonymously
+                if (!auth.currentUser) {
+                    await signInAnonymously(auth);
                 }
+                
+                // Then, listen for the auth state change to get the user ID and load data
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        userIdDisplay.textContent = userId;
+                        // Path to the user's private orders collection
+                        const ordersPath = `/artifacts/${appId}/users/${userId}/orders`;
+                        const q = query(collection(db, ordersPath));
+
+                        // Listen for real-time updates to the orders
+                        onSnapshot(q, (snapshot) => {
+                            const orders = [];
+                            snapshot.forEach((doc) => {
+                                orders.push({ id: doc.id, ...doc.data() });
+                            });
+                            
+                            if (orders.length > 0) {
+                                ordersList.innerHTML = orders.map(order => {
+                                    let photoHtml1 = '';
+                                    if (order.photo) {
+                                        photoHtml1 = `<div class="mt-4"><p class="font-semibold text-gray-300 mb-2">Photo 1:</p><img src="${order.photo}" class="rounded-md w-full object-cover" alt="Photo de crampons"></div>`;
+                                    }
+                                    let photoHtml2 = '';
+                                    if (order.photo2) {
+                                        photoHtml2 = `<div class="mt-4"><p class="font-semibold text-gray-300 mb-2">Photo 2:</p><img src="${order.photo2}" class="rounded-md w-full object-cover" alt="Photo de crampons"></div>`;
+                                    }
+                                    let phoneHtml = '';
+                                    if (order.phone) {
+                                        phoneHtml = `<p class="text-gray-300"><span class="font-semibold">Téléphone:</span> ${order.phone}</p>`;
+                                    }
+                                    let secondPairHtml = '';
+                                    if (order.secondPair) {
+                                        secondPairHtml = `<p class="text-gray-300"><span class="font-semibold">Deuxième paire:</span> Oui</p>`;
+                                    }
+                                    let model2Html = '';
+                                    if (order.model2) {
+                                        model2Html = `<p class="text-gray-300"><span class="font-semibold">Modèle 2:</span> ${order.model2}</p>`;
+                                    }
+                                    let size2Html = '';
+                                    if (order.size2) {
+                                        size2Html = `<p class="text-gray-300"><span class="font-semibold">Pointure 2:</span> ${order.size2}</p>`;
+                                    }
+                                    let descriptionHtml = '';
+                                    if (order.description) {
+                                        descriptionHtml = `<p class="text-gray-300"><span class="font-semibold">Notes:</span> ${order.description}</p>`;
+                                    }
+                                    let gameResultHtml = '';
+                                    if (order.gameResult) {
+                                        const resultColor = order.gameResult === 'Gagné' ? 'text-green-400' : 'text-red-400';
+                                        gameResultHtml = `<p class="mt-2 ${resultColor}"><span class="font-semibold">Jeu de chance:</span> ${order.gameResult} (Votre nombre: ${order.userGuess}, Nombre gagnant: ${order.winningNumber})</p>`;
+                                    }
+
+                                    return `
+                                        <div class="bg-gray-700 p-4 rounded-md shadow-md">
+                                            <p class="text-gray-100"><span class="font-semibold">Modèle 1:</span> ${order.model}</p>
+                                            <p class="text-gray-300"><span class="font-semibold">Pointure 1:</span> ${order.size}</p>
+                                            ${model2Html}
+                                            ${size2Html}
+                                            <p class="text-gray-300"><span class="font-semibold">Prix:</span> ${order.price} €</p>
+                                            <p class="text-gray-300"><span class="font-semibold">Prénom:</span> ${order.name}</p>
+                                            <p class="text-gray-300"><span class="font-semibold">Adresse:</span> ${order.address}, ${order.postalCode} ${order.city} (${order.country})</p>
+                                            ${phoneHtml}
+                                            ${descriptionHtml}
+                                            ${secondPairHtml}
+                                            ${photoHtml1}
+                                            ${photoHtml2}
+                                            ${gameResultHtml}
+                                            <div class="mt-4">
+                                                <label for="status-${order.id}" class="block text-sm font-medium text-gray-300">Statut:</label>
+                                                <select id="status-${order.id}" class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400" onchange="window.updateOrderStatus('${order.id}', this.value)">
+                                                    <option value="En attente de paiement" ${order.status === 'En attente de paiement' ? 'selected' : ''}>En attente de paiement</option>
+                                                    <option value="Payée" ${order.status === 'Payée' ? 'selected' : ''}>Payée</option>
+                                                    <option value="Expédiée" ${order.status === 'Expédiée' ? 'selected' : ''}>Expédiée</option>
+                                                    <option value="Annulée" ${order.status === 'Annulée' ? 'selected' : ''}>Annulée</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('');
+
+                                // Check if a game has already been played in any of the user's orders
+                                if (orders.some(order => order.gameResult)) {
+                                    tryLuckBtn.disabled = true;
+                                    luckyNumberInput.disabled = true;
+                                    gameResultContainer.innerHTML = `<p class="p-3 bg-red-700 text-red-200 rounded-md">Tu as déjà joué au jeu de chance pour cette session.</p>`;
+                                    submitBtn.disabled = false;
+                                }
+
+                            } else {
+                                ordersList.innerHTML = `<p class="text-center text-gray-400">Aucune commande trouvée.</p>`;
+                            }
+                            loadingOrdersEl.style.display = 'none';
+                        }, (error) => {
+                            console.error("Error fetching orders: ", error);
+                            ordersList.innerHTML = `<p class="text-center text-red-400">Erreur lors du chargement des commandes.</p>`;
+                            loadingOrdersEl.style.display = 'none';
+                        });
+                    }
+                });
+            } catch (error) {
+                console.error("Authentication error:", error);
+                showMessage("Erreur d'authentification. Veuillez réessayer.", true);
             }
-        });
+        }
+        
+        // Call the function to start authentication and data loading
+        authenticateAndLoadData();
 
         // Step 1: Handle the "Try my luck" button click
         tryLuckBtn.addEventListener('click', () => {
@@ -472,7 +477,7 @@
             
             // On inclut le userId dans le nom de l'article pour faciliter le rapprochement du paiement
             const paypalItemName = gameResult.hasWon ? `Commande GRATUITE de crampons (GAGNÉ)` : `Commande de crampons (ID: ${userId}): ${document.getElementById('model').value.trim()}${isSecondPair ? ' & paire 2' : ''}`;
-            const paymentUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${paypalEmail}&item_name=${encodeURIComponent(paypalItemName)}&amount=${gameResult.finalPrice}&currency_code=EUR&no_shipping=1&return=https://www.tonsite.com&cancel_return=https://www.tonsite.com/cancel`;
+            const paymentUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${paypalEmail}&item_name=${encodeURIComponent(paypalItemName)}&amount=${gameResult.finalPrice}&currency_code=EUR&no_shipping=1&return=${encodeURIComponent(githubPagesUrl)}&cancel_return=${encodeURIComponent(githubPagesUrl)}`;
             
             // Then save the order with a 'pending' status
             try {
