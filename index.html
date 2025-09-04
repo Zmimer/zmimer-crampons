@@ -140,7 +140,7 @@
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, addDoc, updateDoc, onSnapshot, collection, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Firebase configuration and initialization
@@ -175,7 +175,7 @@
         
         const europeanCountries = ['BE', 'FR', 'DE', 'IT', 'ES', 'NL', 'PT', 'AT', 'LU', 'GB', 'CH'];
         
-        let gameResult = null; // Changed to null to check if the game has been played
+        let gameResult = null;
 
         // Function to display a message
         function showMessage(text, isError = false) {
@@ -188,9 +188,9 @@
         // Update button text and show/hide second pair options when checkbox state changes
         secondPairCheckbox.addEventListener('change', () => {
             const isSecondPair = secondPairCheckbox.checked;
-            let price = 120; // default for one pair
+            let price = 120;
             if (isSecondPair) {
-                price = 200; // default for two pairs
+                price = 200;
             }
 
             if (gameResult) {
@@ -225,21 +225,19 @@
         // Authentication and data loading
         async function authenticateAndLoadData() {
             try {
-                // First, attempt to sign in anonymously
-                if (!auth.currentUser) {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
                     await signInAnonymously(auth);
                 }
                 
-                // Then, listen for the auth state change to get the user ID and load data
                 onAuthStateChanged(auth, (user) => {
                     if (user) {
                         userId = user.uid;
                         userIdDisplay.textContent = userId;
-                        // Path to the user's private orders collection
                         const ordersPath = `/artifacts/${appId}/users/${userId}/orders`;
                         const q = query(collection(db, ordersPath));
 
-                        // Listen for real-time updates to the orders
                         onSnapshot(q, (snapshot) => {
                             const orders = [];
                             snapshot.forEach((doc) => {
@@ -309,8 +307,6 @@
                                         </div>
                                     `;
                                 }).join('');
-
-                                // Check if a game has already been played in any of the user's orders
                                 if (orders.some(order => order.gameResult)) {
                                     tryLuckBtn.disabled = true;
                                     luckyNumberInput.disabled = true;
@@ -335,7 +331,6 @@
             }
         }
         
-        // Call the function to start authentication and data loading
         authenticateAndLoadData();
 
         // Step 1: Handle the "Try my luck" button click
@@ -352,8 +347,8 @@
             const isSecondPair = secondPairCheckbox.checked;
 
             const price_base = 120;
-            const price_second_pair_win = 120; // Corrected price for second pair if win
-            const price_second_pair_lose = 80; // Existing price for second pair if lose
+            const price_second_pair_win = 120;
+            const price_second_pair_lose = 80;
             
             let finalPrice = 0;
             
@@ -372,11 +367,8 @@
                 finalPrice: finalPrice
             };
             
-            // Disable the game button after first click
             tryLuckBtn.disabled = true;
             luckyNumberInput.disabled = true;
-
-            // Enable and update the payment button
             submitBtn.disabled = false;
             submitBtn.textContent = `Passer la commande et Payer (${gameResult.finalPrice}€)`;
         });
@@ -475,16 +467,12 @@
                 }
             }
             
-            // On inclut le userId dans le nom de l'article pour faciliter le rapprochement du paiement
             const paypalItemName = gameResult.hasWon ? `Commande GRATUITE de crampons (GAGNÉ)` : `Commande de crampons (ID: ${userId}): ${document.getElementById('model').value.trim()}${isSecondPair ? ' & paire 2' : ''}`;
             const paymentUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${paypalEmail}&item_name=${encodeURIComponent(paypalItemName)}&amount=${gameResult.finalPrice}&currency_code=EUR&no_shipping=1&return=${encodeURIComponent(githubPagesUrl)}&cancel_return=${encodeURIComponent(githubPagesUrl)}`;
             
-            // Then save the order with a 'pending' status
             try {
-                // Get a reference to the private orders collection
                 const ordersRef = collection(db, `/artifacts/${appId}/users/${userId}/orders`);
                 
-                // Add the new order to the collection
                 await addDoc(ordersRef, {
                     model: document.getElementById('model').value.trim(),
                     size: parseInt(document.getElementById('size').value.trim(), 10),
@@ -505,7 +493,7 @@
                     gameResult: gameResult.hasWon ? 'Gagné' : 'Perdu',
                     userGuess: gameResult.userGuess,
                     winningNumber: gameResult.winningNumber,
-                    timestamp: serverTimestamp() // Add a timestamp for ordering
+                    timestamp: serverTimestamp()
                 });
 
                 window.open(paymentUrl, '_blank');
@@ -515,7 +503,7 @@
                 } else {
                     showMessage("Commande envoyée. Veuillez compléter le paiement sur la page PayPal qui vient de s'ouvrir.", true);
                 }
-                form.reset(); // Reset the form after successful submission
+                form.reset();
                 submitBtn.disabled = true;
                 
             } catch (e) {
