@@ -1,1 +1,537 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zmimer Crampons</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* bg-slate-900 */
+            color: #f1f5f9; /* text-slate-100 */
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4">
+
+    <!-- Main Container -->
+    <div class="bg-gray-800 p-8 rounded-lg shadow-2xl w-full max-w-xl">
+        
+        <h1 class="text-3xl font-bold text-center text-teal-400 mb-6">Zmimer Crampons</h1>
+        <p class="text-center text-gray-300 mb-8">
+            Tente ta chance ! Entre un nombre entre 1 et 100. Si tu gagnes, ta commande est gratuite !
+        </p>
+
+        <!-- Loading Screen -->
+        <div id="loadingScreen" class="text-center text-gray-400">
+            <p>Connexion à l'application...</p>
+            <div class="w-12 h-12 border-4 border-teal-400 border-dashed rounded-full animate-spin mx-auto mt-4"></div>
+        </div>
+
+        <!-- App Content (Hidden until loaded) -->
+        <div id="appContent" class="hidden">
+             <!-- User ID Display -->
+            <div class="mb-6 text-sm text-gray-400 text-center">
+                <p>Ton identifiant unique pour cette session est :</p>
+                <p id="userId" class="text-xs break-all mt-1 bg-gray-700 p-2 rounded-md text-gray-200">En attente...</p>
+            </div>
+
+            <!-- Order Form -->
+            <form id="orderForm" class="space-y-4">
+                <!-- Game of Chance Section -->
+                <div class="bg-gray-700 p-4 rounded-md border border-teal-400 shadow-md">
+                    <label for="luckyNumber" class="block text-sm font-medium text-gray-200">Mon nombre porte-bonheur (entre 1 et 100)</label>
+                    <input type="number" id="luckyNumber" name="luckyNumber" min="1" max="100" class="mt-1 block w-full px-3 py-2 bg-gray-600 border border-gray-500 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400">
+                    <div class="flex justify-center mt-4">
+                        <button type="button" id="tryLuckBtn" class="py-2 px-6 bg-teal-500 text-white font-semibold rounded-md shadow-lg hover:bg-teal-400 transition-colors duration-200">
+                            Tenter ma chance
+                        </button>
+                    </div>
+                    <div id="gameResultContainer" class="mt-4 text-center"></div>
+                </div>
+
+                <div>
+                    <label for="model" class="block text-sm font-medium text-gray-200">Modèle de Crampons</label>
+                    <input type="text" id="model" name="model" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400">
+                </div>
+                <div>
+                    <label for="photo" class="block text-sm font-medium text-gray-200">Photo de la paire (facultatif)</label>
+                    <input type="file" id="photoUpload" name="photo" accept="image/*" class="mt-1 block w-full text-gray-200 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-teal-500 file:text-white hover:file:bg-teal-400">
+                </div>
+                <div>
+                    <label for="size" class="block text-sm font-medium text-gray-200">Pointure (EU)</label>
+                    <input type="number" id="size" name="size" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400">
+                </div>
+                <div class="flex items-center space-x-2">
+                    <input type="checkbox" id="secondPair" name="secondPair" class="form-checkbox h-4 w-4 text-teal-600 transition duration-150 ease-in-out">
+                    <label for="secondPair" class="text-sm font-medium text-gray-200">Deuxième paire (Total 200€)</label>
+                </div>
+                <div id="secondPairOptions" class="space-y-4 hidden">
+                    <div>
+                        <label for="model2" class="block text-sm font-medium text-gray-200">Modèle de la deuxième paire</label>
+                        <input type="text" id="model2" name="model2" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400">
+                    </div>
+                    <div>
+                        <label for="photo2" class="block text-sm font-medium text-gray-200">Photo de la deuxième paire (facultatif)</label>
+                        <input type="file" id="photoUpload2" name="photo2" accept="image/*" class="mt-1 block w-full text-gray-200 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-teal-500 file:text-white hover:file:bg-teal-400">
+                    </div>
+                    <div>
+                        <label for="size2" class="block text-sm font-medium text-gray-200">Pointure (EU) de la deuxième paire</label>
+                        <input type="number" id="size2" name="size2" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400">
+                    </div>
+                </div>
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-200">Ton Prénom</label>
+                    <input type="text" id="name" name="name" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400">
+                </div>
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-200">Numéro de Téléphone</label>
+                    <input type="tel" id="phone" name="phone" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400">
+                </div>
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-200">Description / Notes (facultatif)</label>
+                    <textarea id="description" name="description" rows="3" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400"></textarea>
+                </div>
+                <div>
+                    <label for="address" class="block text-sm font-medium text-gray-200">Adresse de livraison</label>
+                    <input type="text" id="address" name="address" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="city" class="block text-sm font-medium text-gray-200">Ville</label>
+                        <input type="text" id="city" name="city" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400">
+                    </div>
+                    <div>
+                        <label for="postalCode" class="block text-sm font-medium text-gray-200">Code Postal</label>
+                        <input type="text" id="postalCode" name="postalCode" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400">
+                    </div>
+                </div>
+                <div>
+                    <label for="country" class="block text-sm font-medium text-gray-200">Pays</label>
+                    <select id="country" name="country" class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400">
+                        <option value="">Sélectionner un pays</option>
+                        <option value="BE">Belgique</option>
+                        <option value="FR">France</option>
+                        <option value="DE">Allemagne</option>
+                        <option value="IT">Italie</option>
+                        <option value="ES">Espagne</option>
+                        <option value="NL">Pays-Bas</option>
+                        <option value="PT">Portugal</option>
+                        <option value="AT">Autriche</option>
+                        <option value="LU">Luxembourg</option>
+                        <option value="GB">Royaume-Uni</option>
+                        <option value="CH">Suisse</option>
+                    </select>
+                </div>
+                
+                <div class="flex">
+                    <button type="submit" id="submitBtn" class="w-full py-3 px-4 bg-teal-500 text-white font-semibold rounded-md shadow-lg hover:bg-teal-400 transition-colors duration-200 mt-4">
+                        Passer la commande et Payer (120€)
+                    </button>
+                </div>
+            </form>
+
+            <!-- Confirmation and Error Messages -->
+            <div id="messageContainer" class="mt-6 text-center"></div>
+
+            <!-- Orders list container -->
+            <div class="mt-12">
+                <h2 class="text-2xl font-bold text-teal-400 mb-4 text-center">Mes commandes passées</h2>
+                <div id="ordersList" class="space-y-4">
+                    <p class="text-center text-gray-400" id="loadingOrders">Chargement des commandes...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, addDoc, updateDoc, onSnapshot, collection, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // Firebase configuration and initialization
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // UI Elements
+        const appContent = document.getElementById('appContent');
+        const loadingScreen = document.getElementById('loadingScreen');
+        const form = document.getElementById('orderForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const tryLuckBtn = document.getElementById('tryLuckBtn');
+        const messageContainer = document.getElementById('messageContainer');
+        const gameResultContainer = document.getElementById('gameResultContainer');
+        const ordersList = document.getElementById('ordersList');
+        const userIdDisplay = document.getElementById('userId');
+        const luckyNumberInput = document.getElementById('luckyNumber');
+        const photoUploadInput = document.getElementById('photoUpload');
+        const photoUpload2Input = document.getElementById('photoUpload2');
+        const secondPairCheckbox = document.getElementById('secondPair');
+        const secondPairOptionsDiv = document.getElementById('secondPairOptions');
+
+        let userId = null;
+        // IMPORTANT: REMPLACE "YOUR_PAYPAL_EMAIL" PAR TON ADRESSE E-MAIL PAYPAL.
+        const paypalEmail = "zmimerimad5920@gmail.com"; 
+        // IMPORTANT: REMPLACE "https://www.your-github-pages-url.com" PAR L'URL DE TON SITE PUBLIC.
+        const githubPagesUrl = "https://www.your-github-pages-url.com";
+        
+        const europeanCountries = ['BE', 'FR', 'DE', 'IT', 'ES', 'NL', 'PT', 'AT', 'LU', 'GB', 'CH'];
+        
+        let gameResult = null;
+        let hasPlayedGame = false;
+
+        // Function to display a message
+        function showMessage(text, isError = false) {
+            messageContainer.innerHTML = `<p class="p-3 rounded-md ${isError ? 'bg-red-700 text-red-200' : 'bg-green-700 text-green-200'}">${text}</p>`;
+            setTimeout(() => {
+                messageContainer.innerHTML = '';
+            }, 10000);
+        }
+
+        // Function to update order status in Firestore
+        window.updateOrderStatus = async function(orderId, newStatus) {
+            if (!userId) {
+                showMessage("Erreur : l'utilisateur n'est pas authentifié.", true);
+                return;
+            }
+            const orderDocRef = doc(db, `/artifacts/${appId}/users/${userId}/orders`, orderId);
+            try {
+                await updateDoc(orderDocRef, {
+                    status: newStatus
+                });
+                showMessage("Statut de la commande mis à jour !");
+            } catch (e) {
+                console.error("Erreur lors de la mise à jour du statut:", e);
+                showMessage("Erreur lors de la mise à jour du statut de la commande.", true);
+            }
+        };
+
+        // Function to load app content after successful authentication
+        async function loadAppContent() {
+            loadingScreen.classList.add('hidden');
+            appContent.classList.remove('hidden');
+
+            // If a user is authenticated, start listening for orders
+            if (auth.currentUser) {
+                userId = auth.currentUser.uid;
+                userIdDisplay.textContent = userId;
+
+                const ordersPath = `/artifacts/${appId}/users/${userId}/orders`;
+                const q = query(collection(db, ordersPath));
+
+                onSnapshot(q, (snapshot) => {
+                    const orders = [];
+                    snapshot.forEach((doc) => {
+                        orders.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    if (orders.length > 0) {
+                        hasPlayedGame = orders.some(order => order.gameResult);
+                        
+                        ordersList.innerHTML = orders.map(order => {
+                            let photoHtml1 = '';
+                            if (order.photo) {
+                                photoHtml1 = `<div class="mt-4"><p class="font-semibold text-gray-300 mb-2">Photo 1:</p><img src="${order.photo}" class="rounded-md w-full object-cover" alt="Photo de crampons"></div>`;
+                            }
+                            let photoHtml2 = '';
+                            if (order.photo2) {
+                                photoHtml2 = `<div class="mt-4"><p class="font-semibold text-gray-300 mb-2">Photo 2:</p><img src="${order.photo2}" class="rounded-md w-full object-cover" alt="Photo de crampons"></div>`;
+                            }
+                            let phoneHtml = '';
+                            if (order.phone) {
+                                phoneHtml = `<p class="text-gray-300"><span class="font-semibold">Téléphone:</span> ${order.phone}</p>`;
+                            }
+                            let secondPairHtml = '';
+                            if (order.secondPair) {
+                                secondPairHtml = `<p class="text-gray-300"><span class="font-semibold">Deuxième paire:</span> Oui</p>`;
+                            }
+                            let model2Html = '';
+                            if (order.model2) {
+                                model2Html = `<p class="text-gray-300"><span class="font-semibold">Modèle 2:</span> ${order.model2}</p>`;
+                            }
+                            let size2Html = '';
+                            if (order.size2) {
+                                size2Html = `<p class="text-gray-300"><span class="font-semibold">Pointure 2:</span> ${order.size2}</p>`;
+                            }
+                            let descriptionHtml = '';
+                            if (order.description) {
+                                descriptionHtml = `<p class="text-gray-300"><span class="font-semibold">Notes:</span> ${order.description}</p>`;
+                            }
+                            let gameResultHtml = '';
+                            if (order.gameResult) {
+                                const resultColor = order.gameResult === 'Gagné' ? 'text-green-400' : 'text-red-400';
+                                gameResultHtml = `<p class="mt-2 ${resultColor}"><span class="font-semibold">Jeu de chance:</span> ${order.gameResult} (Votre nombre: ${order.userGuess}, Nombre gagnant: ${order.winningNumber})</p>`;
+                            }
+
+                            return `
+                                <div class="bg-gray-700 p-4 rounded-md shadow-md">
+                                    <p class="text-gray-100"><span class="font-semibold">Modèle 1:</span> ${order.model}</p>
+                                    <p class="text-gray-300"><span class="font-semibold">Pointure 1:</span> ${order.size}</p>
+                                    ${model2Html}
+                                    ${size2Html}
+                                    <p class="text-gray-300"><span class="font-semibold">Prix:</span> ${order.price} €</p>
+                                    <p class="text-gray-300"><span class="font-semibold">Prénom:</span> ${order.name}</p>
+                                    <p class="text-gray-300"><span class="font-semibold">Adresse:</span> ${order.address}, ${order.postalCode} ${order.city} (${order.country})</p>
+                                    ${phoneHtml}
+                                    ${descriptionHtml}
+                                    ${secondPairHtml}
+                                    ${photoHtml1}
+                                    ${photoHtml2}
+                                    ${gameResultHtml}
+                                    <div class="mt-4">
+                                        <label for="status-${order.id}" class="block text-sm font-medium text-gray-300">Statut:</label>
+                                        <select id="status-${order.id}" class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-teal-400 focus:border-teal-400" onchange="window.updateOrderStatus('${order.id}', this.value)">
+                                            <option value="En attente de paiement" ${order.status === 'En attente de paiement' ? 'selected' : ''}>En attente de paiement</option>
+                                            <option value="Payée" ${order.status === 'Payée' ? 'selected' : ''}>Payée</option>
+                                            <option value="Expédiée" ${order.status === 'Expédiée' ? 'selected' : ''}>Expédiée</option>
+                                            <option value="Annulée" ${order.status === 'Annulée' ? 'selected' : ''}>Annulée</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+
+                        if (hasPlayedGame) {
+                            tryLuckBtn.disabled = true;
+                            luckyNumberInput.disabled = true;
+                            gameResultContainer.innerHTML = `<p class="p-3 bg-red-700 text-red-200 rounded-md">Tu as déjà joué au jeu de chance pour cette session.</p>`;
+                        } else {
+                            tryLuckBtn.disabled = false;
+                            luckyNumberInput.disabled = false;
+                        }
+
+                    } else {
+                        ordersList.innerHTML = `<p class="text-center text-gray-400">Aucune commande trouvée.</p>`;
+                    }
+                }, (error) => {
+                    console.error("Erreur lors du chargement des commandes:", error);
+                    ordersList.innerHTML = `<p class="text-center text-red-400">Erreur lors du chargement des commandes.</p>`;
+                });
+            } else {
+                 // Authentication failed or user is not signed in
+                userIdDisplay.textContent = "Erreur de connexion. L'application ne fonctionnera pas.";
+                showMessage("Erreur de connexion à la base de données. L'application ne fonctionnera pas.", true);
+            }
+        }
+        
+        // This is the main function that runs when the page is loaded
+        document.addEventListener('DOMContentLoaded', async () => {
+             // Try to sign in the user
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                loadAppContent();
+            } catch (error) {
+                console.error("Échec de l'authentification:", error);
+                // Show the app content anyway, but with an error message
+                loadAppContent();
+            }
+        });
+
+        // Update button text and show/hide second pair options when checkbox state changes
+        secondPairCheckbox.addEventListener('change', () => {
+            const isSecondPair = secondPairCheckbox.checked;
+            let price = 120;
+            if (isSecondPair) {
+                price = 200;
+            }
+            if (gameResult) {
+                if (gameResult.hasWon) {
+                    price = isSecondPair ? 120 : 0;
+                }
+                gameResult.finalPrice = price;
+            }
+            submitBtn.textContent = `Passer la commande et Payer (${price}€)`;
+            secondPairOptionsDiv.classList.toggle('hidden', !isSecondPair);
+        });
+
+        // Step 1: Handle the "Try my luck" button click
+        tryLuckBtn.addEventListener('click', () => {
+            const luckyNumber = parseInt(luckyNumberInput.value.trim(), 10);
+            if (isNaN(luckyNumber) || luckyNumber < 1 || luckyNumber > 100) {
+                showMessage("Veuillez entrer un nombre valide entre 1 et 100 pour le jeu de chance.", true);
+                return;
+            }
+
+            const winningNumber = Math.floor(Math.random() * 100) + 1;
+            const hasWon = luckyNumber === winningNumber;
+            const isSecondPair = secondPairCheckbox.checked;
+            
+            let finalPrice;
+            if (hasWon) {
+                finalPrice = isSecondPair ? 120 : 0;
+                gameResultContainer.innerHTML = `<p class="p-3 bg-green-700 text-green-200 rounded-md">Félicitations ! Tu as gagné ! Le numéro gagnant était bien **${winningNumber}**. La première paire est **GRATUITE**.</p>`;
+            } else {
+                finalPrice = isSecondPair ? 200 : 120;
+                gameResultContainer.innerHTML = `<p class="p-3 bg-red-700 text-red-200 rounded-md">Tu as perdu. Le numéro gagnant était **${winningNumber}**. Le prix reste normal.</p>`;
+            }
+            
+            gameResult = {
+                hasWon: hasWon,
+                userGuess: luckyNumber,
+                winningNumber: winningNumber,
+                finalPrice: finalPrice
+            };
+            
+            tryLuckBtn.disabled = true;
+            luckyNumberInput.disabled = true;
+            submitBtn.disabled = false;
+            submitBtn.textContent = `Passer la commande et Payer (${gameResult.finalPrice}€)`;
+        });
+
+        // Step 2: Handle the form submission (payment)
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!userId) {
+                showMessage("L'authentification n'est pas prête. Veuillez attendre quelques instants.", true);
+                return;
+            }
+            if (!gameResult) {
+                showMessage("Tu dois d'abord tenter ta chance.", true);
+                return;
+            }
+
+            const requiredFields = {
+                'model': 'Modèle de Crampons',
+                'size': 'Pointure (EU)',
+                'name': 'Prénom',
+                'phone': 'Numéro de Téléphone',
+                'address': 'Adresse de livraison',
+                'city': 'Ville',
+                'postalCode': 'Code Postal',
+                'country': 'Pays'
+            };
+
+            for (const fieldId in requiredFields) {
+                const value = document.getElementById(fieldId).value.trim();
+                if (!value) {
+                    showMessage(`Le champ "${requiredFields[fieldId]}" est obligatoire.`, true);
+                    return;
+                }
+            }
+            
+            const country = document.getElementById('country').value.trim();
+            if (!europeanCountries.includes(country)) {
+                showMessage("Veuillez choisir un pays de livraison valide en Europe.", true);
+                return;
+            }
+
+            const isSecondPair = secondPairCheckbox.checked;
+            if (isSecondPair) {
+                const secondPairFields = {
+                    'model2': 'Modèle de la deuxième paire',
+                    'size2': 'Pointure (EU) de la deuxième paire'
+                };
+                for (const fieldId in secondPairFields) {
+                    const value = document.getElementById(fieldId).value.trim();
+                    if (!value) {
+                        showMessage(`Le champ "${secondPairFields[fieldId]}" est obligatoire car tu as choisi une deuxième paire.`, true);
+                        return;
+                    }
+                }
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Envoi en cours...';
+
+            let photoData1 = null;
+            if (photoUploadInput.files[0]) {
+                try {
+                    photoData1 = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(photoUploadInput.files[0]);
+                    });
+                } catch (error) {
+                    console.error("Error reading file 1:", error);
+                    showMessage("Erreur lors de la lecture de l'image.", true);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = `Passer la commande et Payer (${gameResult.finalPrice}€)`;
+                    return;
+                }
+            }
+
+            let photoData2 = null;
+            if (isSecondPair && photoUpload2Input.files[0]) {
+                try {
+                    photoData2 = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(photoUpload2Input.files[0]);
+                    });
+                } catch (error) {
+                    console.error("Error reading file 2:", error);
+                    showMessage("Erreur lors de la lecture de la deuxième image.", true);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = `Passer la commande et Payer (${gameResult.finalPrice}€)`;
+                    return;
+                }
+            }
+            
+            const paypalItemName = gameResult.hasWon ? `Commande GRATUITE de crampons (GAGNÉ)` : `Commande de crampons (ID: ${userId}): ${document.getElementById('model').value.trim()}${isSecondPair ? ' & paire 2' : ''}`;
+            const paymentUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${paypalEmail}&item_name=${encodeURIComponent(paypalItemName)}&amount=${gameResult.finalPrice}&currency_code=EUR&no_shipping=1&return=${encodeURIComponent(githubPagesUrl)}&cancel_return=${encodeURIComponent(githubPagesUrl)}`;
+            
+            try {
+                const ordersRef = collection(db, `/artifacts/${appId}/users/${userId}/orders`);
+                
+                await addDoc(ordersRef, {
+                    model: document.getElementById('model').value.trim(),
+                    size: parseInt(document.getElementById('size').value.trim(), 10),
+                    price: gameResult.finalPrice,
+                    name: document.getElementById('name').value.trim(),
+                    phone: document.getElementById('phone').value.trim(),
+                    description: document.getElementById('description').value.trim(),
+                    address: document.getElementById('address').value.trim(),
+                    city: document.getElementById('city').value.trim(),
+                    postalCode: document.getElementById('postalCode').value.trim(),
+                    country: document.getElementById('country').value.trim(),
+                    photo: photoData1,
+                    secondPair: isSecondPair,
+                    model2: isSecondPair ? document.getElementById('model2').value.trim() : null,
+                    size2: isSecondPair ? parseInt(document.getElementById('size2').value.trim(), 10) : null,
+                    photo2: photoData2,
+                    status: 'En attente de paiement',
+                    gameResult: gameResult.hasWon ? 'Gagné' : 'Perdu',
+                    userGuess: gameResult.userGuess,
+                    winningNumber: gameResult.winningNumber,
+                    timestamp: serverTimestamp()
+                });
+
+                window.open(paymentUrl, '_blank');
+                
+                if (gameResult.hasWon) {
+                    showMessage("Félicitations ! Votre commande est GRATUITE ! Veuillez compléter le paiement sur la page PayPal qui vient de s'ouvrir.", false);
+                } else {
+                    showMessage("Commande envoyée. Veuillez compléter le paiement sur la page PayPal qui vient de s'ouvrir.", true);
+                }
+                form.reset();
+                submitBtn.disabled = true;
+                
+            } catch (e) {
+                console.error("Error adding document: ", e);
+                showMessage("Erreur lors de l'envoi de la commande.", true);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = `Passer la commande et Payer (${gameResult.finalPrice}€)`;
+            }
+        });
+    </script>
+</body>
+</html>
+
 
