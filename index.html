@@ -223,15 +223,23 @@
         };
 
         // Authentication and data loading
-        async function authenticateAndLoadData() {
+        async function authenticate() {
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
                     await signInAnonymously(auth);
                 }
-                
-                userId = auth.currentUser.uid;
+            } catch (error) {
+                console.error("Authentication error:", error);
+                showMessage("Erreur d'authentification. Veuillez réessayer.", true);
+            }
+        }
+        
+        // Listen for authentication state changes
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                userId = user.uid;
                 userIdDisplay.textContent = userId;
 
                 const ordersPath = `/artifacts/${appId}/users/${userId}/orders`;
@@ -322,13 +330,14 @@
                     ordersList.innerHTML = `<p class="text-center text-red-400">Erreur lors du chargement des commandes.</p>`;
                     loadingOrdersEl.style.display = 'none';
                 });
-            } catch (error) {
-                console.error("Authentication error:", error);
-                showMessage("Erreur d'authentification. Veuillez réessayer.", true);
+            } else {
+                console.log("No user is signed in.");
+                userIdDisplay.textContent = "Aucun identifiant disponible.";
             }
-        }
-        
-        authenticateAndLoadData();
+        });
+
+        // Initial authentication call
+        authenticate();
 
         // Step 1: Handle the "Try my luck" button click
         tryLuckBtn.addEventListener('click', () => {
