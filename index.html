@@ -217,8 +217,17 @@
         
         // This is the main function that runs when the page is loaded
         document.addEventListener('DOMContentLoaded', async () => {
+             // Timeout to handle infinite loading
+            const authTimeoutId = setTimeout(() => {
+                loadingScreen.classList.add('hidden');
+                appContent.classList.remove('hidden');
+                userIdDisplay.textContent = "Échec de connexion : trop long. Réessaie de recharger la page.";
+                showMessage("La connexion a échoué. L'application ne fonctionnera pas.", true);
+            }, 7000); // 7 seconds timeout
+
              // Use a single listener to handle all authentication states.
              onAuthStateChanged(auth, async (user) => {
+                clearTimeout(authTimeoutId); // Clear timeout if auth state changes
                 loadingScreen.classList.add('hidden');
                 appContent.classList.remove('hidden');
 
